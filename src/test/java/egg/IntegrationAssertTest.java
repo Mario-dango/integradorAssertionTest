@@ -34,7 +34,7 @@ class IntegrationAssertTest {
 
     @AfterEach
     void lololo(){
-        miDriver.close();
+        miDriver.quit();
     }                           
 
     @Test
@@ -164,146 +164,26 @@ de .sendkeys.
     @Test 
     public void ejercicio4() {
         //  Seteamos la url destino
-        String myUrl = "https://www.wikipedia.org";
+        String myUrl = "https://www.youtube.com";
         miDriver.get(myUrl);
 
-        // Realizamos espera implicita de 2.5 segundos
-        miDriver.manage().timeouts().implicitlyWait(2500, TimeUnit.MILLISECONDS); 
+        // Realizamos espera explicita hasta que aparezca el textArea del buscador
+        String buscadorDeIutubCssSelector = "input.ytd-searchbox[id='search']";       // TAG + CLASSNAME + ATTRIBUTE
+        WebDriverWait myWaitReCheto = new WebDriverWait(miDriver, 30);
+        myWaitReCheto.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(buscadorDeIutubCssSelector)));
+        WebElement laBarritaDeBuscador = miDriver.findElement(By.cssSelector(buscadorDeIutubCssSelector));
+        laBarritaDeBuscador.sendKeys("eeeaaaooo");
 
-        miDriver.findElement(By.id("js-link-box-es")).click();
-        // Realizamos espera implicita de 1.5 segundos
-        miDriver.manage().timeouts().implicitlyWait(1500, TimeUnit.MILLISECONDS); 
-        String miBienvenidaEnEspaniol = miDriver.findElement(By.cssSelector("span.mw-headline[data-mw-thread-id='h-Bienvenidos_a_Wikipedia,']")).getText();
-
-        miDriver.navigate().back();
-    
-        // Realizamos espera implicita de 2.5 segundos
-        miDriver.manage().timeouts().implicitlyWait(2500, TimeUnit.MILLISECONDS); 
-
-        miDriver.findElement(By.id("js-link-box-en")).click();
-        // Realizamos espera implicita de 1.5 segundos
-        miDriver.manage().timeouts().implicitlyWait(1500, TimeUnit.MILLISECONDS); 
-        String miBienvenidaEnIngles = miDriver.findElement(By.id("Welcome_to_Wikipedia")).getText();
-
+        String miListaDeResultadosCssSelector = "li.sbsb_c[dir='ltr']";
+        
+        myWaitReCheto.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(miListaDeResultadosCssSelector)));
+        List<WebElement> miListaDeResultados = miDriver.findElements(By.cssSelector(miListaDeResultadosCssSelector));
 
         //  Validación por medio de los Assertions
-        assertEquals("Welcome to Wikipedia", miBienvenidaEnIngles, "No coinciden los titulos en inglés.");
-        assertEquals("Bienvenidos a Wikipedia,", miBienvenidaEnEspaniol, "No coinciden los titulos en Español.");
+        for (WebElement resutladoDeBusqueda : miListaDeResultados) {
+            boolean condicionParaEvaluar = resutladoDeBusqueda.getText().contains("eeeaaaooo");
+            assertTrue(condicionParaEvaluar, "No aparece en la busqueda.");
+        }
     }
 
 }
-
-
-                     
-
-
-    // @Test
-    // void ejercicioCssSelector2(){
-    //     miDriver.get("https://github.com/");
-    //     // TAG + CLASSNAME
-    //     WebElement elBotonMagicoDelGit = miDriver.findElement(By.cssSelector("button.HeaderMenu-link"));
-    //     elBotonMagicoDelGit.click();
-
-    //     WebElement enlaceReLoco = miDriver.findElement(By.cssSelector("a.HeaderMenu-dropdown-link"));
-    //     enlaceReLoco.click();
-
-    //     Assertions.assertNotEquals(null, elBotonMagicoDelGit);
-    //     Assertions.assertNotEquals(null, enlaceReLoco);
-    // }
-    
-    // @Test
-    // void ejercicioCssSelector3(){
-    //     miDriver.get("https://twitter.com/");
-    //     // TAG + ATRIBUTE
-    //     WebElement elBotonDeSinUP = miDriver.findElement(By.cssSelector("a[data-testid=signupButton]"));
-    //     elBotonDeSinUP.click();
-    //     Assertions.assertNotEquals(null, elBotonDeSinUP);
-    // }
-    
-    // @Test
-    // void ejercicioCssSelector4(){
-    //     miDriver.get("https://www.linkedin.com/");
-    //     // TAG + CLASSNAME + ATRIBUTE
-    //     WebElement elBotonDelAlzheimer = miDriver.findElement(By.cssSelector(
-    //         "a.sign-in-form__forgot-password--full-width[data-id=sign-in-form__forgot-password]"
-    //         ));
-    //     elBotonDelAlzheimer.click();
-
-    //     Assertions.assertNotEquals(null, elBotonDelAlzheimer);
-    // }
-
-    // @Test
-    // void ejercicioCssSelector5(){
-    //     miDriver.get("https://medium.com/");
-
-    //     // XPATH
-    //     String xpathDelArticulo = "//*[@id='root']/div/div[4]/div[1]/div/div/div/div[2]/div/div[1]/div/div/div[2]/div[2]/a";
-    //     WebElement elArticuloConRutaFea = miDriver.findElement(By.xpath(xpathDelArticulo));
-    //     elArticuloConRutaFea.click();
-
-    //     Assertions.assertNotEquals(null, elArticuloConRutaFea);
-    // }
-    
-    // @Test
-    // // 6. Etiqueta + Clase: Encuentra y haz clic en el enlace "Contact" en el pie de página del sitio Stack Overflow.
-    // void ejercicioCssSelector6(){
-    //     miDriver.get("https://es.stackoverflow.com/");
-    //     // TAG + CLASSNAME
-    //     List<WebElement> anchorFeoDeS = miDriver.findElements(By.cssSelector("a.js-gps-track"));
-    //     WebElement contactoDelStackOverflow = anchorFeoDeS.get(46);
-    //     contactoDelStackOverflow.click();
-    //     Assertions.assertNotEquals(null, contactoDelStackOverflow);
-    // }
-    
-    // @Test
-    // // 7. Etiqueta + ID: Encuentra y muestra la descripción del primer producto en la página de inicio de Amazon.
-    // void ejercicioCssSelector7(){
-    //     miDriver.get("https://www.amazon.com/");
-    //     // TAG + ID
-    //     // List<WebElement> carruselDeAmazon = miDriver.findElements(By.cssSelector("div#685bf823-01f6-4791-8e4f-27661a121844"));
-    //     // WebElement contactoDelStackOverflow = miDriver.findElements(By.cssSelector("div#685bf823-01f6-4791-8e4f-27661a121844")).get(1);
-    //     WebElement elemento = miDriver.findElement(By.cssSelector("img.product-image[alt='SAMSUNG 980 PRO SSD with Heatsink 2TB PCIe Gen 4 NVMe M.2 Internal Solid State Drive + 2mo Adobe CC Photography, Heat...']"));
-        
-    //     String descripcion = elemento.getAttribute("alt");
-    //     Assertions.assertEquals("SAMSUNG 980 PRO SSD with Heatsink 2TB PCIe Gen 4 NVMe M.2 Internal Solid State Drive + 2mo Adobe CC Photography, Heat...", descripcion);
-    // }
-
-    // @Test
-    // void poneleMecha(){         
-    //     miDriver.get("https://www.crunchyroll.com/es"); 
-
-    //     miDriver.manage().timeouts().implicitlyWait(12000, TimeUnit.MILLISECONDS); 
-
-    //     WebDriverWait espera = new WebDriverWait(miDriver, 15);
-    //     espera.notify();
-
-    //     Wait myFluentWait = new FluentWait(miDriver)
-    //     .withTimeout(30, TimeUnit.SECONDS).
-    //     pollingEvery(4, TimeUnit.SECONDS);
-
-    //     // Wait popUpHorrible = new FluentWait(miDriver).
-    //     // withTimeout(40, TimeUnit.SECONDS).
-    //     // pollingEvery(5, TimeUnit.SECONDS).
-    //     // ignoring(NoSuchElementException.class, TimeoutException.class);
-
-    //     // // TAG + CLASSNAME + ATRIBUTE
-    //     // String miCssSelectorPOP = "//*[@id=\'content\']/div/div[1]/div[1]/div[3]/ul/li[1]/div/div/svg";
-
-    //     // popUpHorrible.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(miCssSelectorPOP)));
-    //     // WebElement popuRepopo = miDriver.findElement(By.xpath(miCssSelectorPOP));
-    //     // popuRepopo.click();
- 
-    //     // TAG + CLASSNAME + ATRIBUTE
-    //     String miCssSelector = "button.carousel-tabs__tab--2llK3[data-t='carousel-tab']";
-
-    //     // myFluentWait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(miCssSelector)));
-    //     List<WebElement> lsitaDeBotonesChingones = miDriver.findElements(By.cssSelector(miCssSelector));
-
-    //     lsitaDeBotonesChingones.get(4).click();
-
-    //     miDriver.manage().timeouts().implicitlyWait(1500, TimeUnit.MILLISECONDS); 
-
-    //     lsitaDeBotonesChingones.get(1).click();
-
-    // }
-
